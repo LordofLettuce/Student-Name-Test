@@ -4,7 +4,7 @@
 using namespace std;
 
 void quizLoop(int& studentNumber, int TOTAL_STUDENTS, string& name, char& userInput, bool userAffirmation[]){
-	ifstream file("letourneauStudents.txt");
+	ifstream file("allStudentNames.txt");
 	
 	file.seekg(0);
 	for(int i = 0; i < (studentNumber-1); i++){
@@ -64,27 +64,29 @@ void resetSave(int& studentNumber){
 
 int main(){
     const int TOTAL_STUDENTS = 1119;
-    ifstream file("letourneauStudents.txt");
+    ifstream file("allStudentNames.txt");
 	ifstream file3("quizSave.txt");
     string name;
     bool userAffirmation[TOTAL_STUDENTS];
     char userInput = 'a', ch;
-    int studentNumber = 0;
+    int studentNumber = 0;//which student you are on
     int count = 0;
     double percentage;
 	
     // Check if the files are successfully opened
     if (!file.is_open()) {
-        cout << "Error could not find the letourneauStudents file! (make sure the .txt file is in the same folder as the .exe";
+        cout << "Error could not find the allStudentNames file! (make sure the .txt file is in the same folder as the .exe)";
         return 1;
     }
-	if (!file3.is_open()) {
-        cout << "Error could not find the quizSave file! (make sure the .txt file is in the same folder as the .exe";
-        return 1;
-    }
+	if(!file3.is_open()){
+		//add the quizSave.txt file
+		resetSave(studentNumber);
+	}
+	else{
+		//get stuff from save file
+		file3 >> studentNumber;
+	}
 	
-	//get stuff from save file
-	file3 >> studentNumber;
 	for(int i = 0; i < TOTAL_STUDENTS-1; i++){
 		userAffirmation[i] = false;
 	}
@@ -98,7 +100,6 @@ int main(){
 		userAffirmation[i] = false;
 		}
 	}
-	studentNumber++;
 	
 	if(studentNumber > 1){
 		cout << "Would you like to continue your previous quiz? (y/n)\n";
@@ -107,6 +108,7 @@ int main(){
 	
 	if(userInput == 'y' || userInput == 'Y'){
         cout << "Great! Getting save... \n\n";
+		studentNumber++;
     }
     else if(userInput == 'n' || userInput == 'N'){
         for(int i = 0; i < TOTAL_STUDENTS-1; i++){
@@ -114,7 +116,6 @@ int main(){
 		}
 		resetSave(studentNumber);
     }
-	
 	
 	//beginning prompt (if first time)
 	if(userInput == 'n' || userInput == 'a'){
@@ -169,7 +170,7 @@ int main(){
 	file3.close();
 	
 	if(studentNumber >= TOTAL_STUDENTS){
-	resetSave(studentNumber);
+		resetSave(studentNumber);
 	}
 	
 	cout << "When you are done, just close the window.";
